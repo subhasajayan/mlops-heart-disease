@@ -1,24 +1,22 @@
 import joblib
 import pandas as pd
-import sys
+
 
 def load_artifacts():
     model = joblib.load("models/model.pkl")
     return model
 
+
 def predict(input_dict):
     model = load_artifacts()
 
-    # Convert input to DataFrame
     df = pd.DataFrame([input_dict])
-
-    # Model already contains preprocessing pipeline
     prediction = model.predict(df)[0]
 
     return int(prediction)
 
+
 if __name__ == "__main__":
-    # Example usage:
     sample = {
         "age": 45,
         "sex": 1,

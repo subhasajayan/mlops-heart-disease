@@ -32,4 +32,4 @@ jobs:
 
     - name: Train model
       run: |
-        python -m src.train
+         python src/train.py

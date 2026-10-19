@@ -5,7 +5,7 @@ import joblib
 
 
 def load_data():
-    df = pd.read_csv("data/heart.csv")
+    df = pd.read_csv("data/processed/heart_clean.csv")
     return df
 
 

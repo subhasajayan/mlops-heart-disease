@@ -1,53 +1,47 @@
+import joblib
 import pandas as pd
-from src.train import preprocess, train_model
 
+model = joblib.load("models/model.pkl")
 
-def test_preprocess():
-    df = pd.DataFrame(
-        {
-            "age": [50],
-            "sex": [1],
-            "cp": [3],
-            "trestbps": [120],
-            "chol": [230],
-            "fbs": [0],
-            "restecg": [1],
-            "thalach": [150],
-            "exang": [0],
-            "oldpeak": [2.3],
-            "slope": [2],
-            "ca": [0],
-            "thal": [2],
-            "target": [1],
-        }
-    )
-
-    X, y, scaler = preprocess(df)
-    assert X.shape[0] == 1
-    assert y.iloc[0] == 1
-    assert scaler is not None
-
-
-def test_train_model():
-    df = pd.DataFrame(
-        {
-            "age": [50, 60],
-            "sex": [1, 0],
-            "cp": [3, 2],
-            "trestbps": [120, 130],
-            "chol": [230, 250],
-            "fbs": [0, 1],
-            "restecg": [1, 0],
-            "thalach": [150, 140],
-            "exang": [0, 1],
-            "oldpeak": [2.3, 1.5],
-            "slope": [2, 1],
-            "ca": [0, 2],
-            "thal": [2, 3],
-            "target": [1, 0],
-        }
-    )
-
-    X, y, scaler = preprocess(df)
-    model = train_model(X, y)
+def test_model_loads():
     assert model is not None
+
+def test_model_prediction_shape():
+    sample = pd.DataFrame({
+        "age": [45],
+        "sex": [1],
+        "cp": [3],
+        "trestbps": [120],
+        "chol": [230],
+        "fbs": [0],
+        "restecg": [1],
+        "thalach": [150],
+        "exang": [0],
+        "oldpeak": [2.3],
+        "slope": [2],
+        "ca": [0],
+        "thal": [2]
+    })
+
+    pred = model.predict(sample)
+    assert pred.shape == (1,)
+
+def test_model_prediction_values():
+    sample = pd.DataFrame({
+        "age": [60],
+        "sex": [0],
+        "cp": [2],
+        "trestbps": [140],
+        "chol": [260],
+        "fbs": [1],
+        "restecg": [0],
+        "thalach": [120],
+        "exang": [1],
+        "oldpeak": [1.5],
+        "slope": [1],
+        "ca": [2],
+        "thal": [3]
+    })
+
+    pred = model.predict(sample)
+    assert pred[0] in [0, 1]

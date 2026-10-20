@@ -1,20 +1,20 @@
-from fastapi import FastAPI,Request
+from fastapi import FastAPI, Request
 from pydantic import BaseModel
 import joblib
-import numpy as np
 import logging
 import time
 from prometheus_fastapi_instrumentator import Instrumentator
 
 # ---------------------------------------------------------
 # Logging + Metrics (ADD THIS AT THE TOP OF app.py)
-# 
+# ---------------------------------------------------------
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
 app = FastAPI()
+
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
@@ -28,7 +28,9 @@ async def log_requests(request: Request, call_next):
     )
     return response
 
+
 Instrumentator().instrument(app).expose(app)
+
 # Load ONLY the model pipeline
 model = joblib.load("models/model.pkl")
 # DO NOT load preprocessor.pkl (it causes double-transform)
@@ -72,11 +74,11 @@ def predict(data: InputData):
         "thal": data.thal
     }])
 
-
     # Fix classifier attribute
     clf = model.named_steps["model"]
     if not hasattr(clf, "multi_class"):
-     clf.multi_class = "auto"
+        clf.multi_class = "auto"
+
     # Predict using the pipeline (it already contains preprocessing)
     pred = model.predict(sample)[0]
     prob = model.predict_proba(sample)[0][pred]

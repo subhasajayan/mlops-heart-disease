@@ -2,10 +2,13 @@
 import joblib
 import pandas as pd
 
+
 model = joblib.load("models/model.pkl")
+
 
 def test_model_loads():
     assert model is not None
+
 
 def test_model_prediction_shape():
     sample = pd.DataFrame({
@@ -26,6 +29,7 @@ def test_model_prediction_shape():
 
     pred = model.predict(sample)
     assert pred.shape == (1,)
+
 
 def test_model_prediction_values():
     sample = pd.DataFrame({

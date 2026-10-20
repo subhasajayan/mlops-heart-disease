@@ -1,10 +1,34 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,Request
 from pydantic import BaseModel
 import joblib
 import numpy as np
+import logging
+import time
+from prometheus_fastapi_instrumentator import Instrumentator
+
+# ---------------------------------------------------------
+# Logging + Metrics (ADD THIS AT THE TOP OF app.py)
+# 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 app = FastAPI()
 
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start_time = time.time()
+    logging.info(f"Incoming request: {request.method} {request.url.path}")
+    response = await call_next(request)
+    process_time = (time.time() - start_time) * 1000
+    logging.info(
+        f"Completed request: {request.method} {request.url.path} "
+        f"Status: {response.status_code} Time: {process_time:.2f} ms"
+    )
+    return response
+
+Instrumentator().instrument(app).expose(app)
 # Load ONLY the model pipeline
 model = joblib.load("models/model.pkl")
 # DO NOT load preprocessor.pkl (it causes double-transform)

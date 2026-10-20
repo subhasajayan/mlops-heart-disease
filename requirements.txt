@@ -3,13 +3,12 @@ seaborn
 matplotlib
 pandas
 numpy
-scikit-learn
+scikit-learn==1.4.2
 mlflow
 joblib
 fastapi
 uvicorn
 pytest
 flake8 
-
-
-
+prometheus-fastapi-instrumentator
+pydantic
